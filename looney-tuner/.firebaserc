@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "looney-tuner": "looney-tuner-digicrest",
+    "default": "looney-tuner-digicrest"
+  }
+}
