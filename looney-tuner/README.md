@@ -6,10 +6,10 @@ Makes it easier to check characters stats and relations and compare them against
 Live Site: https://looney-tuner-digicrest.firebaseapp.com/
 
 <h3>Preview</h3>
-<img src="" width="55%"/>
+<img src="https://github.com/Digicrest/vue/blob/master/looney-tuner/_sample.JPG" width="55%"/>
 
 <h3>GIF Preview</h3>
-<img src="" width="55%"/>
+<img src="https://github.com/Digicrest/vue/blob/master/looney-tuner/_sample.gif" width="55%"/>
 
 ## Project setup
 ```
