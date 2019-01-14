@@ -26,14 +26,14 @@ npm run serve
 npm run build
 ```
 
-### Run your tests
+### Run from Firebase
 ```
-npm run test
+firebase serve
 ```
 
-### Lints and fixes files
+### Deploy
 ```
-npm run lint
+firebase deploy
 ```
 
 ### Customize configuration
