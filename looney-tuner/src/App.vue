@@ -1,13 +1,20 @@
 <template>
   <div class="container" id="app">
     <div class="form-group col-sm-12">
-      <img id="floating-tweety" src="./assets/tweety-float.png" alt="">
-      <input id="search_bar" class="col-sm-10 form-control center" v-model="searchTerm" style="margin-bottom: 20px;" type="text" placeholder="Bugs Bunny...">
+      <img id="floating-tweety" src="./assets/tweety-float.png" alt>
+      <input
+        id="search_bar"
+        class="col-sm-10 form-control center"
+        v-model="searchTerm"
+        style="margin-bottom: 20px;"
+        type="text"
+        placeholder="Bugs Bunny..."
+      >
 
       <div id="role-icon-btns" class="col-sm-4">
         <button class="btn btn-success" v-on:click="filterByRole('Support')">Support</button>
-        <button class="btn btn-info"    v-on:click="filterByRole('Defender')">Defender</button>
-        <button class="btn btn-danger"  v-on:click="filterByRole('Attacker')">Attacker</button>
+        <button class="btn btn-info" v-on:click="filterByRole('Defender')">Defender</button>
+        <button class="btn btn-danger" v-on:click="filterByRole('Attacker')">Attacker</button>
       </div>
       <div id="sort-method-btns" role="group">
         <div class="btn-group">
@@ -15,40 +22,71 @@
           <button type="button" class="btn btn-outline-secondary" v-on:click="sort('rarity')">Rarity</button>
         </div>
         <div class="dropdown" style="margin-left: 10px; display: inline;">
-          <button id="stats-dropdown" data-toggle="dropdown" type="button" class="btn btn-outline-secondary dropdown-toggle">Stats</button>
+          <button
+            id="stats-dropdown"
+            data-toggle="dropdown"
+            type="button"
+            class="btn btn-outline-secondary dropdown-toggle"
+          >Stats</button>
 
           <div class="dropdown-menu">
             <button v-on:click="statPriority = 'total'" class="dropdown-item">TOTAL</button>
-            <button v-on:click="statPriority = 'max_power'" style="color: orange" class="dropdown-item">Power</button>
-            <button v-on:click="statPriority = 'max_health'" style="color: green" class="dropdown-item">Health</button>
-            <button v-on:click="statPriority = 'max_attack'" style="color: red" class="dropdown-item">Attack</button>
-            <button v-on:click="statPriority = 'max_defense'" style="color: blue" class="dropdown-item">Defense</button>
-            <button v-on:click="statPriority = 'max_speed'" style="color: grey" class="dropdown-item">Speed</button>
+            <button
+              v-on:click="statPriority = 'max_power'"
+              style="color: orange"
+              class="dropdown-item"
+            >Power</button>
+            <button
+              v-on:click="statPriority = 'max_health'"
+              style="color: green"
+              class="dropdown-item"
+            >Health</button>
+            <button
+              v-on:click="statPriority = 'max_attack'"
+              style="color: red"
+              class="dropdown-item"
+            >Attack</button>
+            <button
+              v-on:click="statPriority = 'max_defense'"
+              style="color: blue"
+              class="dropdown-item"
+            >Defense</button>
+            <button
+              v-on:click="statPriority = 'max_speed'"
+              style="color: grey"
+              class="dropdown-item"
+            >Speed</button>
           </div>
         </div>
       </div>
 
-      <div id="draggable-filter-reminder" @dblclick="reset" class="btn-group btn filter-group" v-show="showSortBadge || showFilterBadge">
-        <div class="badge" v-show="showSortBadge">
-           Sort: {{ sortBadgeText }}
-        </div>
-        <div class="badge" v-show="showFilterBadge">
-          {{ filterBadgeType }}: {{ filterBadgeText }}
-        </div>
+      <div
+        id="draggable-filter-reminder"
+        @dblclick="reset"
+        class="btn-group btn filter-group"
+        v-show="showSortBadge || showFilterBadge"
+      >
+        <div class="badge" v-show="showSortBadge">Sort: {{ sortBadgeText }}</div>
+        <div class="badge" v-show="showFilterBadge">{{ filterBadgeType }}: {{ filterBadgeText }}</div>
         <span class="small-info good">&#x2713;draggable</span>
         <span class="small-info bad">&times; double click</span>
       </div>
     </div>
     <div id="character-box">
-      <div class="character-tile m10" v-for="toon in (filter.length || searchTerm ? filter : toons)" :key="toon.name">
-          <looney-tune 
-            :charObj="toon" 
-            :charName="toon.parentName"
-            :statLimits="stat_limits"
-            v-on:filterByTag="filterByTag" 
-            v-on:filterByRole="filterByRole"
-            v-on:setPinned="setPinned"
-          />
+      <div
+        class="character-tile m10"
+        v-for="toon in (filter.length || searchTerm ? filter : toons)"
+        :key="toon.name"
+      >
+        <looney-tune
+          :charObj="toon"
+          :charName="toon.parentName"
+          :statLimits="stat_limits"
+          v-on:filterByTag="filterByTag"
+          v-on:filterByRole="filterByRole"
+          v-on:filterByRegion="filterByRegion"
+          v-on:setPinned="setPinned"
+        />
       </div>
       <div id="bad-search" v-if="(searchTerm && filter.length < 1)" class="col-sm-12">
         <h2>What's up Doc!</h2>
@@ -60,11 +98,11 @@
 </template>
 
 <script>
-import { toonsRef } from '../firebaseConfig.js'
-import Character from './components/Character'
+import { toonsRef } from "../firebaseConfig.js";
+import Character from "./components/Character";
 
 export default {
-  name: 'app',
+  name: "app",
   firebase: {
     fb_toons: toonsRef
   },
@@ -86,26 +124,29 @@ export default {
       showFilterBadge: false,
       filterBadgeText: "",
       filterBadgeType: ""
-    }
+    };
   },
   methods: {
     reset() {
-      this.filter = []; 
-      this.searchTerm = '';
+      this.filter = [];
+      this.searchTerm = "";
       this.sortBadgeText = "";
       this.filterBadgeText = "";
       this.sort("name");
     },
     setPinned: function(e) {
-      this.toons[this.toons.map(toon => toon.name).indexOf(e.name)].pinned = e.pin_status;
+      this.toons[this.toons.map(toon => toon.name).indexOf(e.name)].pinned =
+        e.pin_status;
     },
     filterBySearch: function() {
-      this.filterBadgeType = "Search"
+      this.filterBadgeType = "Search";
 
       this.filter = [];
       this.filter = this.toons.filter(toon => {
-        return toon.pinned ? toon : toon.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-      })
+        return toon.pinned
+          ? toon
+          : toon.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+      });
     },
     filterByTag: function(tagName) {
       this.filterBadgeType = "Tag";
@@ -113,125 +154,149 @@ export default {
 
       this.filter = [];
       this.filter = this.toons.filter(toon => {
-        return toon.pinned ? toon : toon.tags.includes(tagName)
-      })
+        return toon.pinned ? toon : toon.tags.includes(tagName);
+      });
     },
     filterByRole: function(roleName) {
-      this.filterBadgeType = "Role"
-      this.filterBadgeText = roleName
+      this.filterBadgeType = "Role";
+      this.filterBadgeText = roleName;
 
-      this.filter = []
+      this.filter = [];
       this.filter = this.toons.filter(toon => {
-        return toon.pinned ? toon : toon.role === roleName
-      })
+        return toon.pinned ? toon : toon.role === roleName;
+      });
+    },
+    filterByRegion: function(region) {
+      this.filterBadgeType = "Region";
+      this.filterBadgeText = region;
+
+      console.log("filtering by region: " + region);
+      this.filter = [];
+      this.filter = this.toons.filter(toon => {
+        return toon.pinned ? toon : toon.region === region;
+      });
     },
     initialResults: function() {
       // TODO: Try to fix this
       // for some reason on page refresh i sometimes get no data from the database, this seems to work as a hack fix
       // but the problem is still there and can happen sometimes.
-      for(let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++) {
         setTimeout(() => {
           this.toons = [];
           // using the database reference to toons
           this.fb_toons.map(fbt => {
             // for each "toon" push the object to our toons array
-            fbt[".value"].map(t => { 
-              t.parentName = fbt[".key"]
-              this.toons.push(t)
-              
+            fbt[".value"].map(t => {
+              t.parentName = fbt[".key"];
+              this.toons.push(t);
+
               // iterate through each stat and set the upper bounds rounded up to the nearest 100
               for (const stat in t.stats) {
                 if (t.stats.hasOwnProperty(stat)) {
                   const current_stat = t.stats[stat];
-                  if(this.stat_limits[stat] < current_stat) {
-                    this.stat_limits[stat] = current_stat
+                  if (this.stat_limits[stat] < current_stat) {
+                    this.stat_limits[stat] = current_stat;
                   }
                 }
               }
 
               for (const stat in this.stat_limits) {
-                this.stat_limits[stat] = Math.ceil(this.stat_limits[stat]/100)*100
+                this.stat_limits[stat] =
+                  Math.ceil(this.stat_limits[stat] / 100) * 100;
               }
 
-              this.sort('name')
-            })
-          })   
+              this.sort("name");
+            });
+          });
         }, 1000);
-        if(this.toons.length > 0) break;
+        if (this.toons.length > 0) break;
       }
     },
     sort: function(by) {
       let comparator = this.compareByName;
-      if (by === "rarity")  comparator = this.compareByRarity
+      if (by === "rarity") comparator = this.compareByRarity;
       if (by === "stats") {
-        comparator = this.compareByStats
+        comparator = this.compareByStats;
         this.showSortBadge = true;
       } else {
         this.showSortBadge = false;
-        this.sortBadgeText = ""
+        this.sortBadgeText = "";
       }
-      this.toons = this.toons.sort(comparator)
-      this.filter = this.filter.sort(comparator)
+      this.toons = this.toons.sort(comparator);
+      this.filter = this.filter.sort(comparator);
     },
     compareByName: function(t1, t2) {
       let comparison = 0;
-      
+
       let t1Name = t1.name.toLowerCase();
       let t2Name = t2.name.toLowerCase();
 
-      if(t1Name > t2Name) comparison = 1;
-      if(t1Name < t2Name) comparison = -1;
+      if (t1Name > t2Name) comparison = 1;
+      if (t1Name < t2Name) comparison = -1;
       return comparison;
     },
     compareByRarity: function(t1, t2) {
-      let rarities = ["Common", "Rare", "Epic", "Legendary"]
+      let rarities = ["Common", "Rare", "Epic", "Legendary"];
       let comparison = 0;
-      
+
       let t1Rarity = rarities.indexOf(t1.rarity);
       let t2Rarity = rarities.indexOf(t2.rarity);
 
-      if(t1Rarity > t2Rarity) comparison = -1;
-      if(t1Rarity < t2Rarity) comparison = 1;
+      if (t1Rarity > t2Rarity) comparison = -1;
+      if (t1Rarity < t2Rarity) comparison = 1;
       return comparison;
     },
     compareByStats: function(t1, t2) {
       let comparison = 0;
 
-      if(this.statPriority === "total"){
-        this.sortBadgeText = "Total"
-        const t1TotalStats = Object.values(t1.stats).reduce((total, stat) => total += stat, 0)
-        const t2TotalStats = Object.values(t2.stats).reduce((total, stat) => total += stat, 0)
+      if (this.statPriority === "total") {
+        this.sortBadgeText = "Total";
+        const t1TotalStats = Object.values(t1.stats).reduce(
+          (total, stat) => (total += stat),
+          0
+        );
+        const t2TotalStats = Object.values(t2.stats).reduce(
+          (total, stat) => (total += stat),
+          0
+        );
 
-        if (t1TotalStats < t2TotalStats) { comparison = 1; } 
-        else if (t1TotalStats > t2TotalStats) { comparison = -1; }
+        if (t1TotalStats < t2TotalStats) {
+          comparison = 1;
+        } else if (t1TotalStats > t2TotalStats) {
+          comparison = -1;
+        }
       } else {
-        this.sortBadgeText = this.statPriority[4].toUpperCase() + this.statPriority.substring(5);
-        if (t1.stats[this.statPriority] < t2.stats[this.statPriority]) { comparison = 1; }
-        else if (t1.stats[this.statPriority] > t2.stats[this.statPriority]) { comparison = -1; }
+        this.sortBadgeText =
+          this.statPriority[4].toUpperCase() + this.statPriority.substring(5);
+        if (t1.stats[this.statPriority] < t2.stats[this.statPriority]) {
+          comparison = 1;
+        } else if (t1.stats[this.statPriority] > t2.stats[this.statPriority]) {
+          comparison = -1;
+        }
       }
-      return comparison
+      return comparison;
     }
   },
   watch: {
-    "searchTerm": function() {
+    searchTerm: function() {
       this.filterBySearch();
       this.filterBadgeText = this.searchTerm;
       setDraggable();
     },
-    "statPriority": function () {
-      this.sort("stats")
+    statPriority: function() {
+      this.sort("stats");
     },
-    "sortBadgeText"(){
-      if (!this.sortBadgeText){
+    sortBadgeText() {
+      if (!this.sortBadgeText) {
         this.showSortBadge = false;
       } else {
         this.showSortBadge = true;
         setDraggable();
       }
     },
-    "filterBadgeText": function(){
-      if(!this.filterBadgeText){
-        this.showFilterBadge = false
+    filterBadgeText: function() {
+      if (!this.filterBadgeText) {
+        this.showFilterBadge = false;
       } else {
         this.showFilterBadge = true;
         setDraggable();
@@ -242,17 +307,19 @@ export default {
     this.initialResults();
   },
   components: {
-    LooneyTune: Character,
+    LooneyTune: Character
   }
-}
+};
 
 function setDraggable() {
-    $("#draggable-filter-reminder").draggable();
+  $("#draggable-filter-reminder").draggable();
 }
 </script>
 
 <style>
-body { background-color: #EEE }
+body {
+  background-color: #eee;
+}
 
 #floating-tweety {
   position: absolute;
@@ -263,22 +330,24 @@ body { background-color: #EEE }
   animation: tweetyFloat 2.1s infinite;
 }
 
-@keyframes tweetyFloat{
-    0% {
-        transform: translate3d(0, 0, 0);
-        animation-timing-function: ease-in;
-    }
+@keyframes tweetyFloat {
+  0% {
+    transform: translate3d(0, 0, 0);
+    animation-timing-function: ease-in;
+  }
 
-    50% {
-        transform: translate3d(0, 20px, 0);
-        animation-timing-function: ease-out
-    }
+  50% {
+    transform: translate3d(0, 20px, 0);
+    animation-timing-function: ease-out;
+  }
 
-    100% { transform: translate3d(0, 0, 0) }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   text-align: center;
   color: #2c3e50;
   margin-top: 40px;
@@ -313,8 +382,8 @@ body { background-color: #EEE }
 }
 
 .filter-group {
-  position: absolute; 
-  display: flex; 
+  position: absolute;
+  display: flex;
   flex-direction: column;
   border-bottom: 1px solid grey;
   border-left: 1px solid grey;
@@ -331,11 +400,14 @@ body { background-color: #EEE }
 
 .small-info {
   margin-top: 5px;
-  font-size: .6rem;
+  font-size: 0.6rem;
 }
-.good { color: mediumseagreen }
-.bad { color: maroon }
-
+.good {
+  color: mediumseagreen;
+}
+.bad {
+  color: maroon;
+}
 
 @media only screen and (max-width: 700px) {
   #bad-search img {
@@ -363,39 +435,40 @@ body { background-color: #EEE }
   text-align: center;
 }
 
-.link, .link:hover {
+.link,
+.link:hover {
   font-size: 24pt;
-  color: rgb(32, 178, 170)
+  color: rgb(32, 178, 170);
 }
 .link:hover {
   color: rgb(2, 148, 140);
 }
 
 .dropdown-menu {
-    box-shadow: 4px 4px 4px silver;
+  box-shadow: 4px 4px 4px silver;
 }
 .dropdown-menu button {
   margin-top: 3px;
   /* border: 1px solid grey; */
   /* border-radius: 5px; */
   text-align: center;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .badge {
   color: #777;
   border: 1px solid #777;
-  font-size: .6rem;
+  font-size: 0.6rem;
   margin-top: 10px;
   padding: 8px;
   box-shadow: 2px 2px 2px silver;
 }
 
 .badge:hover {
-  transform: scale(1.05)
+  transform: scale(1.05);
 }
 
 #search_bar {
-  font-family: 'Charm', cursive;
+  font-family: "Charm", cursive;
 }
 </style>
