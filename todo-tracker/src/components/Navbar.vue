@@ -12,6 +12,30 @@
 
             <v-spacer></v-spacer>
             
+
+              <!-- <div class="text-xs-center">
+                <v-menu offset-y>
+                    <v-btn slot="activator" color="primary" dark>Dropdown</v-btn>
+                    <v-list>
+                        <v-list-tile v-for="(item, index) in items" :key="index" @click="">
+                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+            </div> -->
+
+            <!-- dropdown menu -->
+            <v-menu offset-y>
+                <v-btn flat slot="activator" color="grey">
+                    <v-icon left>expand_more</v-icon>
+                    <span>Menu</span>
+                </v-btn>
+                <v-list>
+                    <v-list-tile v-for="link in links" :key="link.text" router :to="link.route">
+                        <v-list-tile-title>{{ link.title }}</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
             <v-btn flat color="grey">
                 <span>Sign out</span>
                 <v-icon right>exit_to_app</v-icon>
