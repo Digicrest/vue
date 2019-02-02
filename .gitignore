@@ -2,6 +2,9 @@
 .firebase
 firebaseConfig.js
 
+# VueJS
+dist/
+
 # Logs
 logs
 *.log
