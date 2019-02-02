@@ -4,7 +4,7 @@
             <v-toolbar-side-icon @click="drawer = !drawer" fab color="grey--text">
                 <v-icon>menu</v-icon>
             </v-toolbar-side-icon>
-            
+
             <v-toolbar-title class="text-uppercase grey--text">
                 <span class="font-weight-light">Todo</span>
                 <span>Digicrest</span>
@@ -19,7 +19,16 @@
         </v-toolbar>
 
         <v-navigation-drawer app v-model="drawer" class="primary">
-            
+            <v-list dark>
+                <v-list-tile active-class="secondary" v-for="link in links" :key="link.title" router :to="link.route">
+                    <v-list-tile-action>
+                        <v-icon>{{ link.icon }}</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>{{ link.title }}</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
         </v-navigation-drawer>
     </nav>
 </template>
@@ -28,7 +37,12 @@
 export default {
     data: function() {
         return {
-            drawer: false
+            drawer: false,
+            links: [
+                { icon: 'dashboard', title: 'Dashboard', route: '/' },
+                { icon: 'folder', title: 'My Projects', route: '/projects' },
+                { icon: 'group', title: 'The Team', route: '/team' }
+            ]
         }
     }
 }
