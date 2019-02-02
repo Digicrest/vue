@@ -3,35 +3,27 @@
     <h1 class="subheading grey--text">Dashboard</h1>
     
     <v-container class="my-5">
-      <v-layout row wrap>
-        <v-flex xs12 md6>
-          <v-btn outline block class="primary">1</v-btn>
-        </v-flex>
-        <v-flex xs4 md2>
-          <v-btn outline block class="primary">2</v-btn>
-        </v-flex>
-        <v-flex xs4 md2>
-          <v-btn outline block class="primary">2</v-btn>
-        </v-flex>
-        <v-flex xs4 md2>
-          <v-btn outline block class="primary">2</v-btn>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row wrap justify-space-around>
-        <v-flex xs4 md3>
-          <v-btn outline block class="success">1</v-btn>
-        </v-flex>
-        <v-flex xs4 md3>
-          <v-btn outline block class="success">2</v-btn>
-        </v-flex>
-      </v-layout>
+      <project-card v-for="project in projects" :key="project.title" :project="project"/>
     </v-container>
   </div>
 </template>
 
 <script>
-export default {
+import ProjectCard from '@/components/ProjectCard'
 
+export default {
+  components:{
+    ProjectCard
+  },
+  data(){
+    return {
+       projects: [
+        { title: 'Design a new website', person: 'Koshiro Izumi', due: '1st Jan 2019', status: 'ongoing', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!'},
+        { title: 'Code up the homepage', person: 'Sora Takaneuchi', due: '10th Jan 2019', status: 'complete', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!'},
+        { title: 'Design video thumbnails', person: 'Hikari Yagami', due: '20th Dec 2018', status: 'complete', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!'},
+        { title: 'Create a community forum', person: 'T.K.', due: '20th Oct 2018', status: 'overdue', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!'},
+      ]
+    }
+  }
 };
 </script>
