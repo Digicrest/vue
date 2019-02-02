@@ -11,18 +11,6 @@
             </v-toolbar-title>
 
             <v-spacer></v-spacer>
-            
-
-              <!-- <div class="text-xs-center">
-                <v-menu offset-y>
-                    <v-btn slot="activator" color="primary" dark>Dropdown</v-btn>
-                    <v-list>
-                        <v-list-tile v-for="(item, index) in items" :key="index" @click="">
-                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                        </v-list-tile>
-                    </v-list>
-                </v-menu>
-            </div> -->
 
             <!-- dropdown menu -->
             <v-menu offset-y>
@@ -36,6 +24,8 @@
                     </v-list-tile>
                 </v-list>
             </v-menu>
+
+            <!-- signout button -->
             <v-btn flat color="grey">
                 <span>Sign out</span>
                 <v-icon right>exit_to_app</v-icon>
@@ -49,6 +39,9 @@
                         <img src="/avatars/digicrest.jpg">
                     </v-avatar>
                     <p class="white--text subheading mt-1">Koshiro Izumi</p>  
+                </v-flex>
+                <v-flex class="mt-4 mb-3">
+                    <popup />
                 </v-flex>
             </v-layout>
 
@@ -67,7 +60,10 @@
 </template>
 
 <script>
+import Popup from './Popup';
+
 export default {
+    components: { Popup },
     data: function() {
         return {
             drawer: false,
