@@ -6,6 +6,7 @@
       <v-layout row class="mb-3">
         <sort-button type="title"  icon="folder" text="by folder name" @sortBy="sortBy"/>
         <sort-button type="person" icon="person" text="by person" @sortBy="sortBy"/>
+        <sort-button type="status" icon="check" text="by status" @sortBy="sortBy"/>
       </v-layout>
       <project-card v-for="project in projects" :key="project.title" :project="project"/>
     </v-container>
