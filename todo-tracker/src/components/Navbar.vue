@@ -19,6 +19,15 @@
         </v-toolbar>
 
         <v-navigation-drawer app v-model="drawer" class="primary">
+            <v-layout column align-center>
+                <v-flex class="mt-4">
+                    <v-avatar size="100">
+                        <img src="/avatars/digicrest.jpg">
+                    </v-avatar>
+                    <p class="white--text subheading mt-1">Koshiro Izumi</p>  
+                </v-flex>
+            </v-layout>
+
             <v-list dark>
                 <v-list-tile active-class="secondary" v-for="link in links" :key="link.title" router :to="link.route">
                     <v-list-tile-action>
