@@ -1,4 +1,16 @@
 # todo-tracker
+A TO DO app which is the result of following this tutorial: 
+Only minor modifications have been made.
+
+This project only took a handful of hours and served as a brief introduction to the veutiful world of vuetify.
+
+Live Site: https://todo-tracker-digicrest.firebaseapp.com/
+
+<h3>Preview</h3>
+<img src="https://github.com/Digicrest/vue/blob/master/todo-tracker/_sample.jpg" width="55%"/>
+
+<h3>GIF Preview</h3>
+<img src="https://github.com/Digicrest/vue/blob/master/todo-tracker/_sample.gif" width="55%"/>
 
 ## Project setup
 ```
