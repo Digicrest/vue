@@ -58,6 +58,7 @@ export default {
                     this.dialogIsOpen = false;
                     this.$emit("projectAdded", project.person);
                 })
+                this.$refs.form.reset();
             }
         }
     },

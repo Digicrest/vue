@@ -16,7 +16,7 @@
             <div>{{ project.due }}</div>
           </v-flex>
 
-            <v-flex xs12 sm4 md2>
+            <v-flex xs10 sm4 md2>
                 <div class="right">
                     <v-chip small :class="`${project.status} white--text caption text-capitalize my-2`">{{ project.status }}</v-chip>
                 </div>
