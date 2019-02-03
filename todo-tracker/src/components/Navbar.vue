@@ -41,7 +41,7 @@
                     <p class="white--text subheading mt-1">Koshiro Izumi</p>  
                 </v-flex>
                 <v-flex class="mt-4 mb-3">
-                    <popup />
+                    <popup v-on:projectAdded="projectAdded"/>
                 </v-flex>
             </v-layout>
 
@@ -72,6 +72,11 @@ export default {
                 { icon: 'folder', title: 'My Projects', route: '/projects' },
                 { icon: 'group', title: 'The Team', route: '/team' }
             ]
+        }
+    },
+    methods: {
+        projectAdded(person) {
+            this.$emit("projectAdded", person);
         }
     }
 }

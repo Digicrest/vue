@@ -1,5 +1,5 @@
 <template>
-    <v-dialog max-width="600px">
+    <v-dialog max-width="600px" v-model="dialogIsOpen">
         <v-btn flat slot="activator" class="success">Add New Project</v-btn>
         <v-card>
             <v-card-title>
@@ -18,7 +18,7 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-btn flat class="success mx-0 mt-3" @click="submit">Add Project</v-btn>
+                    <v-btn flat class="success mx-0 mt-3" @click="submit" :loading="currentlySubmitting">Add Project</v-btn>
                 </v-form>
             </v-card-text>
         </v-card>
@@ -37,7 +37,9 @@ export default {
             due: null,
             inputRules: [
                 v => v && v.length >= 3 || 'Minimum Length is 3 Characters'
-            ]
+            ],
+            currentlySubmitting: false,
+            dialogIsOpen: false
         }
     },
     methods: {
@@ -50,9 +52,11 @@ export default {
                     person: 'Digicrest',
                     status: 'ongoing'
                 };
-
+                this.currentlySubmitting = true;
                 db.collection('projects').add(project).then(() => {
-                    console.log('added to db')
+                    this.currentlySubmitting = false;
+                    this.dialogIsOpen = false;
+                    this.$emit("projectAdded", project.person);
                 })
             }
         }
@@ -62,6 +66,7 @@ export default {
             if (this.due) {
                 return format(this.due, 'Do MMM YYYY')
             }
+            return null;
         }
     }
 }
