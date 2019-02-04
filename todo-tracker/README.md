@@ -1,8 +1,9 @@
 # todo-tracker
-A TO DO app which is the result of following this tutorial: 
+A TO DO app which is the result of following this tutorial: https://www.youtube.com/watch?v=2uZYKcKHgU0
+
 Only minor modifications have been made.
 
-This project only took a handful of hours and served as a brief introduction to the veutiful world of vuetify.
+This project only took a handful of hours and served as a brief introduction to the veutiful world of [VUETIFY](https://vuetifyjs.com/en/).
 
 Live Site: https://todo-tracker-digicrest.firebaseapp.com/
 
