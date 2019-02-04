@@ -1,6 +1,7 @@
 # Firebase
 .firebase
 firebaseConfig.js
+firestore.rules
 
 # VueJS
 dist/
