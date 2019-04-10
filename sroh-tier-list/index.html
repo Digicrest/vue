@@ -1,0 +1,440 @@
+<!doctype html>
+<html>
+<head>
+  <title>SROH Tier List Creator</title>
+  <meta name="description" content="Create your own Skylanders:ROH Tier List." />
+  <script src="https://unpkg.com/vue"></script>
+
+  <link rel="icon" type="image/png" href="images/tab-icon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css" />
+  
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+  
+  <style type="text/css">
+    .tier_selector * {
+      padding: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" class="ui stackable grid" style="padding: 1em;">
+
+    <!-- Start of sidebar -->
+    <div id="unit-scroller" class="four wide computer fourteen wide tablet column centered" v-show="!expanded">
+      <div id="unit-panel" class="ui center aligned header">
+        <div class="ui header">Skylanders: ROH</div>
+        <div>
+          <img :src="'./images/units/' + unit.name + '.png'" 
+            style="
+              margin-bottom: 5px;
+              box-shadow: 5px 4px 5px silver;
+              border-radius: 5px;">
+          </img>
+        </div>
+        <div>
+          
+          <div class="ui one header" style="color: rgb(40, 40, 40)">{{ unit.name }}</div>
+          <div class="ui five mini statistics">
+            <div class="green statistic">
+              <div class="value">{{ unit.stats.hp }}</div>
+              <div class="label">HP</div>
+            </div>
+            <div class="red statistic">
+              <div class="value">{{ unit.stats.atk }}</div>
+              <div class="label">Atk</div>
+            </div>
+            <div class="blue statistic">
+              <div class="value">{{ unit.stats.def }}</div>
+              <div class="label">Def</div>
+            </div>
+            <div class="grey statistic">
+              <div class="value">{{ unit.stats.acc }}</div>
+              <div class="label">Acc</div>
+            </div>
+            <div class="orange statistic">
+              <div class="value">{{ unit.stats.endurance }}</div>
+              <div class="label">End</div>
+            </div>
+          </div>
+
+          <div class="ui divider"></div>
+
+          <div class="tier_selector">
+            <p>Current rank: {{ ranking }}</p>
+            <div class="ui selection list">
+              <button class="ui button" v-for="rank in rankings.slice(1, rankings.length)" v-on:click="addRank(unit.name, rankings.indexOf(rank))" style="margin: 2px">{{ rank }}</button>
+            </div>
+
+            <!-- Start of Add New Tier-->
+            <button class="ui button" v-on:click="editTiers=!editTiers">Customize Tiers</button>
+            <div v-if="editTiers">
+              <div class="ui hidden divider"></div>
+              <div class="ui action input" style="width: 100%">
+                <input type="text" placeholder="eg. EX" v-model="tierToAdd">
+                <select class="ui compact selection dropdown" v-model="parentTier">
+                  <option v-for="rank in rankings">{{ rank }}</option>
+                </select>
+              </div>
+              <button class="ui button" v-on:click="addTier(tierToAdd, parentTier)">Add New Tier Above {{ parentTier }}</button>
+
+              <div class="ui hidden divider"></div>
+              <!-- End of Add New Tier -->
+
+              <!-- Start of Delete Tier -->
+              <div class="ui" style="width: 100%">
+                <select class="ui fluid dropdown" v-model="tierToDelete">
+                  <option v-for="rank in rankings.slice(1,rankings.length)">{{ rank }}</option>
+                </select>
+              </div>
+              <button class="ui button" v-on:click="deleteTier(tierToDelete)">Delete Tier {{ tierToDelete }}</button>
+              <button class="ui button" v-on:click="deleteAllTiers()">Delete All Tiers</button>
+              <!-- End of Delete Tier -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Start of unit info -->
+      <div class="ui divider"></div>
+
+      <!-- Start of unit listing -->
+      <div class="ui form">
+        <!-- Filters -->
+        <div class="one field">
+          <div class="field">
+            <label>Search</label>
+            <input type="text" v-model="searchFilter" v-on:input="resetIndex">
+            </input>
+          </div>
+
+        </div>
+        <div class="three fields">
+          <div class="field">
+            <label>Element</label>
+            <select v-model="selectedElement">
+              <option selected value="">All</option>
+              <option>Fire</option>
+              <option>Water</option>
+              <option>Life</option>
+              <option>Air</option>
+              <option>Magic</option>
+              <option>Tech</option>
+              <option>Earth</option>
+              <option>Undead</option>
+              <option>Light</option>
+              <option>Dark</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <select v-model="selectedRole">
+              <option selected value="">All</option>
+              <option>Attack</option>
+              <option>Defense</option>
+              <option>Support</option>
+              <option>Expert</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Rarity</label>
+            <select v-model="selectedRarity">
+              <option selected value="">All</option>
+              <option>*</option>
+              <option>**</option>
+              <option>***</option>
+              <option>****</option>
+              <option>*****</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- unit List -->
+      <div style="height: 300px;" v-show="!importing && !exporting">
+        <div class="ui selection list" style="height: 100%; overflow-y: scroll;">
+          <div :name="unit.name" class="item" v-for="unit in unit_list" v-on:click.stop="selectUnit(unit.name)">
+            <img class="ui avatar image" :src="'./images/units/' + unit.name + '.png'">
+            <div class="content">
+              <div class="header">{{ unit.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Field -->
+      <div style="height: 300px;" v-show="exporting">
+        <div class="ui form">
+          <div class="field">
+            <label>Copy text from here</label>
+            <textarea readonly rows="14"> {{ rankToText }}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Import Field -->
+      <div style="height: 300px;" v-show="importing">
+        <div class="ui form">
+          <div class="field">
+            <label>Paste text here</label>
+            <textarea rows="14" @input="textToRank($event.target.value)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label>Progress: {{ rankCount }}/{{ all_units.length }}</label>
+      </div>
+      <!-- End of unit listing -->
+
+      <div class="ui divider"></div>
+
+      <!-- Start of action buttons -->
+      <div class="ui four buttons">
+        <button class="ui button" v-on:click="randomize()">
+          <i class="icon random"></i>
+          Randomize
+        </button>
+        <button class="ui button" v-on:click="reset()">
+          <i class="icon erase"></i>
+          Reset
+        </button>
+        <button class="ui button" v-if="!importing" v-on:click="importing = !importing; exporting = false">
+          <i class="icon paste"></i>
+          Import
+        </button>
+        <button class="ui button" v-else v-on:click="importing = false; exporting = false">
+          <i class="icon list"></i>
+          List
+        </button>
+        <button class="ui button" v-if="!exporting" v-on:click="exporting = !exporting; importing = false">
+          <i class="icon copy"></i>
+          Export
+        </button>
+        <button class="ui button" v-else v-on:click="importing = false; exporting = false">
+          <i class="icon list"></i>
+          List
+        </button>
+      </div>
+      <!-- End of action buttons -->
+
+    </div>
+    <!-- End of side bar -->
+
+    <!-- Start of Table -->
+    <div id="grid" class="column centered"
+      :class="!expanded ? 'twelve wide computer fourteen wide tablet' : 'sixteen wide computer sixteen wide tablet'">
+      <table class="ui celled table center aligned" style="min-height: 900px;">
+        <thead>
+          <th :style="evenwidth ? 'width: calc(100% / 13)' : ''">
+            <div class="ui small basic icon buttons">
+              <button class="ui button" data-tooltip="Toggle fullscreen mode" data-position="bottom center" v-on:click="expanded = !expanded">
+                <i :class="!expanded ? 'expand icon' : 'compress icon'"></i>
+              </button>
+              <button class="ui button" data-tooltip="Toggle column width" data-position="bottom center" v-on:click="evenwidth = !evenwidth">
+                <i :class="!evenwidth ? 'resize horizontal icon' : 'resize vertical icon'"></i>
+              </button>
+            </div>
+          </th>
+          <th :style="evenwidth ? 'width: calc(100% / 13)' : ''" v-for="element in elements">
+            <img style="width: 32px; height: 32px" :src="'./images/elements/' + element + '.png'"></img>
+          </th>
+        </thead>
+        <tbody>
+          <tr v-for="rank in rankings.slice(1, rankings.length).reverse()">
+            <td>{{ rank }}</td>
+            <td v-for="element in elements" :id="rank + '-' + element" style="padding: 0">
+              <a href="#!" v-on:click="selectUnit(unit.name)" v-for="unit in getRankedUnits(element, rank)">
+                <img :name="unit.name" style="
+                  width: 42px; 
+                  height: 42px; 
+                  margin: 2px;
+                  border-radius: 5px;
+                  border: 1px solid black;" 
+                  :src="'./images/units/' + unit.name + '.png'">
+                </img>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- End of Table -->
+  </div>
+</body>
+
+<script src="./unit_data.js"></script>
+
+<script>
+  units.forEach(function (unit) {
+    unit.rating = 0
+  })
+  units = units.filter(unit => !unit.name.includes('generic'))
+
+  new Vue({
+    el: '#app',
+    data: {
+      all_units: units,
+      unit_index: Math.floor(Math.random() * units.length),
+      originalRankings: ['Unranked', 'C', 'B', 'A', 'A+', 'S-', 'S', 'S+'],
+      rankings: ['Unranked', 'C', 'B', 'A', 'A+', 'S-', 'S', 'S+'],
+      elements: ['air', 'undead', 'water', 'tech', 'fire', 'magic', 'life', 'earth', 'light', 'dark'],
+      selectedRole: "",
+      searchFilter: "",
+      selectedElement: "",
+      selectedRarity: "",
+      parentTier: "S+",
+      tierToDelete: "",
+      tierToAdd: "",
+      importing: false,
+      exporting: false,
+      expanded: false,
+      evenwidth: false,
+      editTiers: false,
+    },
+    computed: {
+      unit: function () {
+        return this.all_units[this.unit_index]
+      },
+      ranking: function () {
+        return this.rankings[this.unit.rating]
+      },
+      rankCount: function () {
+        return this.all_units.map(unit => unit.rating).filter(rating => rating > 0).length
+      },
+      unit_list: function () {
+        return this.all_units
+          .filter(unit => unit.name.toLowerCase().includes(this.searchFilter.toLowerCase()))
+          .filter(unit => this.selectedRole ? unit.role.toLowerCase() == this.selectedRole.toLowerCase() : unit)
+          .filter(unit => this.selectedElement ? unit.element.toLowerCase() == this.selectedElement.replace(/\s+/g, '').toLowerCase() : unit)
+          .filter(unit => this.selectedRarity ? unit.unlock_stars === this.selectedRarity.length : unit)
+          .filter(unit => unit.rating == 0)
+      },
+      rankToText: function () {
+        ratings = [{ rankings: this.rankings }];
+        ratings = ratings.concat(this.all_units.map(unit => ({ name: unit.name, rating: unit.rating })));
+        return JSON.stringify(ratings);
+      },
+    },
+    methods: {
+      resetIndex: function () {
+        this.incrementIndex()
+        this.decrementIndex()
+      },
+      incrementIndex: function (event) {
+        if (this.unit_list.length == 0) return;
+
+        current_unit_name = this.all_units[this.unit_index].name;
+        next_unit_index = this.unit_list.map(unit => unit.name).indexOf(current_unit_name) + 1;
+
+        if (next_unit_index >= this.unit_list.length) { 
+          next_unit_index = 0;
+        }
+
+        next_unit_name = this.unit_list[next_unit_index].name;
+        this.unit_index = this.all_units.map(unit => unit.name).indexOf(next_unit_name);
+      },
+      decrementIndex: function (event) {
+        if (this.unit_list.length == 0) return;
+
+        current_unit_name = this.all_units[this.unit_index].name;
+        next_unit_index = this.unit_list.map(unit => unit.name).indexOf(current_unit_name) - 1;
+
+        if (next_unit_index < 0) { 
+          next_unit_index = this.unit_list.length - 1; 
+        }
+
+        next_unit_name = this.unit_list[next_unit_index].name;
+        this.unit_index = this.all_units.map(unit => unit.name).indexOf(next_unit_name);
+      },
+      addRank: function (name, rating) {
+        this.incrementIndex();
+        this.all_units.find(unit => unit.name === name).rating = rating;
+      },
+      getRankedUnits: function (element, rank) {
+        elements = [element]
+        return this.all_units.filter(unit => elements.includes(unit.element.toLowerCase()) && unit.rating == this.rankings.indexOf(rank))
+      },
+      randomize: function () {
+        length = this.rankings.length - 1
+        this.all_units.forEach(function (unit) {
+          unit.rating = Math.floor(Math.random() * length) + 1
+        })
+      },
+      reset: function () {
+        this.all_units.forEach(function (unit) {
+          unit.rating = 0
+        })
+      },
+      selectUnit: function (name) {
+        this.unit_index = this.all_units.map(unit => unit.name).indexOf(name)
+      },
+      textToRank: function (text) {
+        try {
+          let ratings = JSON.parse(text);
+          let importedRanking = ratings[0].rankings;
+
+          if (importedRanking !== undefined) {
+            let rankingChanged = this._isRankingAltered(importedRanking);
+
+            if (rankingChanged) {
+              this.rankings = importedRanking;
+            }
+            ratings = ratings.slice(1);
+          } else {
+            this._resetRanking();
+          }
+
+          ratings.forEach(rate => { this.all_units.find(unit => unit.name == rate.name).rating = rate.rating })
+        }
+        catch (err) { 
+          console.log("textToRank went wrong.")
+        }
+      },
+      addTier: function (tierToAdd, parentTier) {
+        if (this.rankings.indexOf(tierToAdd) !== -1) return;
+        if (tierToAdd === "") return;
+
+        let parentIndex = this.rankings.indexOf(parentTier);
+        this.rankings.splice(parentIndex + 1, 0, tierToAdd);
+
+        // make sure that units tiers are kept the same as before with the new tier added in
+        this.all_units.filter(unit => unit.rating > parentIndex).forEach(unit => unit.rating++);
+      },
+      deleteTier: function (tierToDelete) {
+        let tierIndex = this.rankings.indexOf(tierToDelete);
+
+        if (tierIndex !== -1) {
+          // reset all units in this tier back to unranked
+          this.all_units.filter(unit => unit.rating === tierIndex).forEach(unit => unit.rating = 0);
+          this.all_units.filter(unit => unit.rating > tierIndex).forEach(unit => unit.rating--);
+          this.rankings.splice(tierIndex, 1);
+        }
+      },
+      deleteAllTiers: function () {
+        this.reset();
+        this.rankings = ['Unranked'];
+      },
+      _isRankingAltered: function (newRanking) {
+        let rankingChanged = false;
+        if (newRanking.length !== this.originalRankings.length) {
+          rankingChanged = true;
+        } else {
+          for (let i = 0; i < this.originalRankings.length; i++) {
+            if (newRanking[i] !== this.originalRankings[i]) {
+              rankingChanged = false;
+              break;
+            }
+          }
+        }
+        return rankingChanged;
+      },
+      _resetRanking: function () {
+        this.rankings = this.originalRankings;
+      }
+    }
+  })
+</script>
+
+</html>
